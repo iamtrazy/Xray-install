@@ -120,7 +120,7 @@ systemctl status nginx && systemctl status xray
 Unzip the two compressed packages, copy xray.exe to the v2rayN folder, and run v2rayN.exe.
 
 - Click Settings - Parameter Settings - v2rayN Settings, check "Ignore Geo files when updating Core", change "Core Type" to "Xray_core", OK.
-- Click Settings - Routing Settings, set the "Domain Resolution Policy"" to "IPIfNonMatch", uncheck "Enable advanced routing functions", change "Domain Name Matching Algorithm" to "mph", click "Basic Functions", click "One-click Import Basic Rules", OK, OK.
+- Click Settings - Routing Settings, set the "Domain Resolution Policy" to "IPIfNonMatch", uncheck "Enable advanced routing functions", change "Domain Name Matching Algorithm" to "mph", click "Basic Functions", click "One-click Import Basic Rules", OK, OK.
 - Right click on the v2rayN icon in the lower right corner of the screen and click on "System Proxy - Automatically Configure System Proxy".
 
 2. Add server in v2rayN
