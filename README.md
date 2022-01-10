@@ -1,33 +1,33 @@
-## Xray + VLESS-TCP-XTLS/VLESS-gRPC-TLS 手动安装教程
+## Xray + VLESS-TCP-XTLS/VLESS-gRPC-TLS manual installation tutorial
 
-准备软件
+Prepare the software
 
-- [Xshell 7 免费版](https://www.xshell.com/zh/free-for-home-school/)
+- [Xshell 7 Free Edition](https://www.xshell.com/zh/free-for-home-school/)
 - [WinSCP](https://winscp.net/eng/docs/lang:chs)
 
-重装系统（新手不建议开始就[网络重装系统](https://github.com/bohanyang/debi)，去你的VPS网站上操作，重装系统为Deian10或11）
+Reinstall the system (newbies are not recommended to start [network reinstallation system](https://github.com/bohanyang/debi), go to your VPS website to operate, and reinstall the system to Deian10 or 11)
 
 - Debian 10
 - Debian 11
 - Ubuntu 18.04
 - Ubuntu 20.04
 
-开始安装
+start installation
 
-- 使用Xshell 7连接你的VPS
-- 使用root用户登陆
-- 请从步骤0开始按顺序操作
-- 如果你已有SSL证书，将公钥文件改名为fullchain.pem，将私钥文件改名为privkey.pem，使用WinSCP连接你的VPS，将它们上传到/etc/ssl/private/目录，执行`chown -R nobody:nogroup /etc/ssl/private/`命令，跳过步骤1
+- Connect your VPS with Xshell 7
+- Login as root user
+- Please operate in order from step 0
+- If you already have an SSL certificate, rename the public key file to fullchain.pem, rename the private key file to privkey.pem, use WinSCP to connect to your VPS, upload them to the /etc/ssl/private/ directory, execute ` chown -R nobody:nogroup /etc/ssl/private/` command, skip step 1
 
-0.安装curl
+0. Install curl
 
-```
+````
 apt update -y && apt install -y curl
-```
+````
 
-1.申请[免费的SSL证书](https://github.com/acmesh-official/acme.sh)
+1. Apply for [Free SSL Certificate](https://github.com/acmesh-official/acme.sh)
 
-- 你先要购买一个域名，然后添加一个子域名，将子域名指向你VPS的IP。因为DNS解析需要一点时间，建议设置好了等5分钟，再执行下面的命令（每行命令依次执行）。你可以通过ping你的子域名，查看返回的IP是否正确。注意：将chika.example.com替换成你的子域名。
+- You need to buy a domain name first, then add a subdomain, and point the subdomain to the IP of your VPS. Because DNS resolution takes a little time, it is recommended to wait 5 minutes after setting, and then execute the following commands (execute each command in sequence). You can check if the returned IP is correct by pinging your subdomain. Note: Replace chika.example.com with your subdomain.
 
 <pre>apt install -y socat
 
@@ -49,120 +49,120 @@ acme.sh --install-cert -d chika.example.com --ecc \
 
 chown -R nobody:nogroup /etc/ssl/private/</pre>
 
-- 备份已申请的SSL证书：使用WinSCP连接你的VPS，进入/etc/ssl/private/目录，下载公钥文件fullchain.pem和私钥文件privkey.pem
+- Backup the applied SSL certificate: use WinSCP to connect to your VPS, enter the /etc/ssl/private/ directory, download the public key file fullchain.pem and the private key file privkey.pem
 
-2.安装[Nginx](http://nginx.org/en/linux_packages.html)
+2. Install [Nginx](http://nginx.org/en/linux_packages.html)
 
 - Debian 10/11
-```
-apt install -y gnupg2 ca-certificates lsb-release debian-archive-keyring && curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor > /usr/share/keyrings/nginx-archive-keyring.gpg && printf "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/mainline/debian `lsb_release -cs` nginx\n" > /etc/apt/sources.list.d/nginx.list && printf "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" > /etc/apt/preferences.d/99nginx && apt update -y && apt install -y nginx && mkdir -p /etc/systemd/system/nginx.service.d && printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" > /etc/systemd/system/nginx.service.d/override.conf
-```
+````
+apt install -y gnupg2 ca-certificates lsb-release debian-archive-keyring && curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor > /usr/share/keyrings/nginx-archive-keyring. gpg && printf "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/mainline/debian `lsb_release -cs` nginx\n" > /etc /apt/sources.list.d/nginx.list && printf "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" > /etc/apt/preferences.d /99nginx && apt update -y && apt install -y nginx && mkdir -p /etc/systemd/system/nginx.service.d && printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" > /etc/ systemd/system/nginx.service.d/override.conf
+````
 
 - Ubuntu 18.04/20.04
-```
-apt install -y gnupg2 ca-certificates lsb-release ubuntu-keyring && curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor > /usr/share/keyrings/nginx-archive-keyring.gpg && printf "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx\n" > /etc/apt/sources.list.d/nginx.list && printf "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" > /etc/apt/preferences.d/99nginx && apt update -y && apt install -y nginx && mkdir -p /etc/systemd/system/nginx.service.d && printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" > /etc/systemd/system/nginx.service.d/override.conf
-```
+````
+apt install -y gnupg2 ca-certificates lsb-release ubuntu-keyring && curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor > /usr/share/keyrings/nginx-archive-keyring.gpg && printf "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx\n" > /etc/apt /sources.list.d/nginx.list && printf "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" > /etc/apt/preferences.d/99nginx && apt update -y && apt install -y nginx && mkdir -p /etc/systemd/system/nginx.service.d && printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" > /etc/systemd/ system/nginx.service.d/override.conf
+````
 
-3.安装[Xray](https://github.com/XTLS/Xray-core/releases)
+3. Install [Xray](https://github.com/XTLS/Xray-core/releases)
 
-```
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install --version 1.5.2
-```
+````
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @install --version 1.5.2
+````
 
-4.1下载Nginx和Xray的配置文件（二选一）
+4.1 Download the configuration files of Nginx and Xray (choose one of two)
 
-- [VLESS-TCP-XTLS](https://github.com/chika0801/Xray-examples/tree/main/VLESS-TCP-XTLS)（推荐使用）
+- [VLESS-TCP-XTLS](https://github.com/chika0801/Xray-examples/tree/main/VLESS-TCP-XTLS) (recommended)
 
-```
-curl -Lo /etc/nginx/nginx.conf https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-TCP-XTLS/nginx.conf && curl -Lo /usr/local/etc/xray/config.json https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-TCP-XTLS/config_server.json
-```
+````
+curl -Lo /etc/nginx/nginx.conf https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-TCP-XTLS/nginx.conf && curl -Lo /usr/local/etc/xray /config.json https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-TCP-XTLS/config_server.json
+````
 
 - [VLESS-gRPC-TLS](https://github.com/chika0801/Xray-examples/tree/main/VLESS-gRPC-TLS)
 
-```
-curl -Lo /etc/nginx/nginx.conf https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-gRPC-TLS/nginx.conf && curl -Lo /usr/local/etc/xray/config.json https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-gRPC-TLS/config_server.json
-```
+````
+curl -Lo /etc/nginx/nginx.conf https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-gRPC-TLS/nginx.conf && curl -Lo /usr/local/etc/xray /config.json https://raw.githubusercontent.com/chika0801/Xray-examples/main/VLESS-gRPC-TLS/config_server.json
+````
 
-- 若更换了配置文件，需要重启Nginx和Xray，使其生效。
+- If the configuration file is changed, you need to restart Nginx and Xray to make it take effect.
 
-4.2下载[路由规则文件加强版](https://github.com/Loyalsoldier/v2ray-rules-dat)
+4.2 Download [Routing Rules File Enhanced Edition](https://github.com/Loyalsoldier/v2ray-rules-dat)
 
-```
-curl -Lo /usr/local/share/xray/geosite.dat https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat && curl -Lo /usr/local/share/xray/geoip.dat https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
-```
+````
+curl -Lo /usr/local/share/xray/geosite.dat https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat && curl -Lo /usr/local/share /xray/geoip.dat https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+````
 
-5.重启Nginx和Xray
+5. Restart Nginx and Xray
 
-```
+````
 systemctl stop nginx && systemctl stop xray && systemctl start nginx && systemctl start xray
-```
+````
 
-6.查看Nginx和Xray状态
+6. Check Nginx and Xray status
 
-```
+````
 systemctl status nginx && systemctl status xray
-```
+````
 
-7.其它
+7. Others
 
-- Xray配置文件路径`/usr/local/etc/xray/config.json` Nginx配置文件路径`/etc/nginx/nginx.conf` 路由规则文件目录`/usr/local/share/xray`
+- Xray configuration file path `/usr/local/etc/xray/config.json` Nginx configuration file path `/etc/nginx/nginx.conf` Routing rule file directory `/usr/local/share/xray`
 
-- 修改服务器配置文件的方法：使用WinSCP连接你的VPS，进入/usr/local/etc/xray/目录，双击config.json文件编辑，找到"id": "chika"，修改后并保存，然后重启Nginx和Xray，使其生效。
+- How to modify the server configuration file: use WinSCP to connect to your VPS, enter the /usr/local/etc/xray/ directory, double-click the config.json file to edit, find "id": "chika", modify and save, then restart Nginx and Xray to make it work.
 
-- SSL证书是每90天自动更新，更新时需要使用80端口，因此在Nginx的配置文件中，没有监听80端口。申请免费证书，每周限制5次，超过次数会报错，[具体限制规则](https://letsencrypt.org/zh-cn/docs/rate-limits/)
+- The SSL certificate is automatically renewed every 90 days, and port 80 needs to be used when updating, so port 80 is not monitored in the Nginx configuration file. Applying for a free certificate is limited to 5 times per week, and an error will be reported if the number of times is exceeded, [specific restriction rules](https://letsencrypt.org/zh-cn/docs/rate-limits/)
 
-## Windows系统客户端配置指南
+## Windows System Client Configuration Guide
 
-1.下载v2rayN和Xray
+1. Download v2rayN and Xray
 
-[打开链接1](https://github.com/2dust/v2rayN/releases)， 点击最新版本栏里的“▸ Assets”，找到名为v2rayN.zip的链接并下载。
-[打开链接2](https://github.com/XTLS/Xray-core/releases) ，点击最新版本栏里的“▸ Assets”，找到名为Xray-windows-64.zip的链接并下载。
-把2个压缩包解压，复制xray.exe到v2rayN文件夹里面，运行v2rayN.exe。
+[Open link 1](https://github.com/2dust/v2rayN/releases), click "▸ Assets" in the latest version column, find the link named v2rayN.zip and download it.
+[Open link 2](https://github.com/XTLS/Xray-core/releases), click "▸ Assets" in the latest version column, find the link named Xray-windows-64.zip and download it.
+Unzip the two compressed packages, copy xray.exe to the v2rayN folder, and run v2rayN.exe.
 
-- 点击 设置 — 参数设置 — v2rayN设置，勾选“更新Core时忽略Geo文件”，将“Core类型”改为“Xray_core”，确定。
-- 点击 设置 — 路由设置，将“域名解析策略”改为“IPIfNonMatch”，取消勾选“启用路由高级功能”，将“域名匹配算法”改为“mph”，点击“基础功能”，点击“一键导入基础规则”，确定，确定。
-- 右键点击屏幕右下角的v2rayN图标，点击“系统代理 — 自动配置系统代理”。
+- Click Settings - Parameter Settings - v2rayN Settings, check "Ignore Geo files when updating Core", change "Core Type" to "Xray_core", OK.
+- Click Settings - Routing Settings, set the "Domain Resolution Policy"" to "IPIfNonMatch", uncheck "Enable advanced routing functions", change "Domain Name Matching Algorithm" to "mph", click "Basic Functions", click "One-click Import Basic Rules", OK, OK.
+- Right click on the v2rayN icon in the lower right corner of the screen and click on "System Proxy - Automatically Configure System Proxy".
 
-2.在v2rayN中添加服务器
+2. Add server in v2rayN
 
 <details><summary>VLESS-TCP-XTLS</summary>
 
-点击“服务器 — 添加[VLESS]服务器”，按下图所示填写，地址填写你的子域名(例如chika.example.com)
+Click on "Server - Add [VLESS] Server", fill in as shown below, and fill in your subdomain for the address (eg chika.example.com)
 
 ![VLESS-TCP-XTLS](https://user-images.githubusercontent.com/88967758/132801053-cc8b3aee-5da8-45d5-9e23-115f3b766e52.jpg)</details>
 
 <details><summary>VLESS-gRPC-TLS</summary>
 
-点击“服务器 — 添加[VLESS]服务器”，按下图所示填写，地址填写你的子域名(例如chika.example.com)
+Click on "Server - Add [VLESS] Server", fill in as shown below, and fill in your subdomain for the address (eg chika.example.com)
 
 ![VLESS-gRPC](https://user-images.githubusercontent.com/88967758/132800221-1e67083c-6d38-4f00-8f24-38ae688f3d09.jpg)</details>
 
-- 点击服务器列表中刚才新增的服务器，按回车键载入配置。
+- Click on the newly added server in the server list and press Enter to load the configuration.
 
-3.点击“检查更新
-- 点击“Update GeoSite — 是否下载? — 是”。
-- 点击“Update GeoIP — 是否下载? — 是”。
+3. Click "Check for Updates"
+- Click on "Update GeoSite - Download? - Yes".
+- Click on "Update GeoIP - Download? - Yes".
 
-## Android系统客户端配置指南
+## Android system client configuration guide
 
-1.在电脑上下载[v2rayNG](https://github.com/2dust/v2rayNg/releases)，如v2rayNG_1.x.x_arm64-v8a.apk。
+1. Download [v2rayNG](https://github.com/2dust/v2rayNg/releases) on your computer, such as v2rayNG_1.x.x_arm64-v8a.apk.
 
-2.在电脑上下载路由规则文件加强版，[geoip.dat](https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat)和[geosite.dat](https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat)。
+2. Download the enhanced version of the routing rules file on your computer, [geoip.dat](https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat) and [geosite.dat] (https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat).
 
-3.把v2rayNG_1.x.x_arm64-v8a.apk，geoip.dat，geosite.dat，用数据线复制到手机，在手机上安装v2rayNG。
+3. Copy v2rayNG_1.x.x_arm64-v8a.apk, geoip.dat, geosite.dat to the phone with a data cable, and install v2rayNG on the phone.
 
-4.进入v2rayNG，点击左上角`≡` —— 设置，勾选“启用本地DNS”，“域名策略”改为“IPIfNonMatch”，“预定义规则”改为“绕过局域网及大陆地址”。
+4. Enter v2rayNG, click `≡` - Settings in the upper left corner, check "Enable Local DNS", "Domain Name Policy" to "IPIfNonMatch", "Predefined Rules" to "Bypass LAN and Mainland Addresses".
 
-5.点击左上角`≡` —— Geo 资源文件，点击右上角`+`，分别选择geoip.dat和geosite.dat。
+5. Click `≡` - Geo resource file in the upper left corner, click `+` in the upper right corner, and select geoip.dat and geosite.dat respectively.
 
-6.在电脑上点击右下角的v2rayN图标，选择要使用的服务器，点击“分享”。
+6. Click the v2rayN icon in the lower right corner of the computer, select the server you want to use, and click "Share".
 
-7.点击右上角`+` —— 扫描二维码，用手机扫描屏幕上的二维码。
+7. Click `+` in the upper right corner - scan QR code, scan the QR code on the screen with your mobile phone.
 
-8.点击右下角的灰色`V`字母图标。
+8. Click on the grey `V` letter icon in the lower right corner.
 
-## 注意事项
+## Precautions
 
-1.[为什么要禁止VPS访问CN域名和IP](https://github.com/XTLS/Xray-core/discussions/593#discussioncomment-845165)。
+1.[Why VPS access CN domain name and IP is prohibited](https://github.com/XTLS/Xray-core/discussions/593#discussioncomment-845165).
 
-2.若使用其它客户端，需设置好CN域名和IP直连，否则将在VPS端被阻止。
+2. If you use other clients, you need to set up the CN domain name and IP direct connection, otherwise it will be blocked on the VPS side.
